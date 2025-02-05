@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\SignUpRequest;
 use App\Models\User;
 use App\Notifications\VerifyEmail;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
@@ -19,14 +20,14 @@ class AuthController extends Controller
 			'password' => $validated['password'],
 		]);
 
-		Auth::user();
 		Auth::login($user);
 		$request->session()->regenerate();
 
-		$user->notify(new VerifyEmail($user));
+		event(new Registered($user));
 
 		return response()->json([
 			'message' => 'Please check your email for verification link.',
+			'email' => $validated['email']
 		], 200);
 	}
 }
