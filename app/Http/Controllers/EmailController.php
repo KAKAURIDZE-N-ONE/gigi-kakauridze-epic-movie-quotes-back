@@ -14,10 +14,4 @@ class EmailController extends Controller
         return redirect('/home');
     }
 
-    public function sendVerificationEmail(Request $request)
-    {
-        $request->user()->sendEmailVerificationNotification();
-	    
-        return back()->with('message', 'Verification link sent!');
-    }
 }

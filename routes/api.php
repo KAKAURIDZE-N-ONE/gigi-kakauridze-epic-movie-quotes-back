@@ -16,4 +16,3 @@ Route::view('/email/verify', 'auth.verify-email')->middleware('auth')->name('ver
 
 Route::get('/email/verify/{id}/{hash}', [EmailController::class, "confirmEmail"])->middleware(['auth', 'signed'])->name('verification.verify');
 
-Route::post('/email/verification-notification', [EmailController::class, 'sendVerificationEmail'])->middleware(['auth', 'throttle:6,1'])->name('verification.send');
