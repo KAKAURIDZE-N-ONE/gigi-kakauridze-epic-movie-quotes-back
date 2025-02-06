@@ -1,17 +1,19 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 
 class EmailController extends Controller
 {
-    public function confirmEmail(EmailVerificationRequest $request):RedirectResponse
-    {
-        $request->fulfill();
+	public function confirmEmail(EmailVerificationRequest $request): JsonResponse
+	{
+		$request->fulfill();
 
-        return redirect('/home');
-    }
-
+		return response()->json(
+			['status' => 'Email successfully verified.'],
+			200
+		);
+	}
 }

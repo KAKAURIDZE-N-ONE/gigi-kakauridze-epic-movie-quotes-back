@@ -2,11 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ForgotPasswordRequest;
+use App\Http\Requests\LogInRequest;
+use App\Http\Requests\ResetPasswordRequest;
 use App\Http\Requests\SignUpRequest;
 use App\Models\User;
-use App\Notifications\VerifyEmail;
+use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
@@ -27,7 +35,69 @@ class AuthController extends Controller
 
 		return response()->json([
 			'message' => 'Please check your email for verification link.',
-			'email' => $validated['email']
+			'email'   => $validated['email'],
+		], 200);
+	}
+
+	public function logIn(LogInRequest $request): JsonResponse
+	{
+		$validated = $request->validated();
+
+		$remember = $request->has('remember') && $request->remember;
+
+		if (!Auth::guard('web')->attempt(['email' => $validated['emailOrName'], 'password' => $validated['password']], $remember) &&
+			!Auth::guard('web')->attempt(['name' => $validated['emailOrName'], 'password' => $validated['password']], $remember)) {
+			return response()->json(['message' => 'Invalid credentials'], 401);
+		}
+
+		Auth::user();
+
+		return response()->json([
+			'message' => 'Login successfully.',
+		], 200);
+	}
+
+	public function logOut(Request $request): JsonResponse
+	{
+		Auth::guard('web')->logout();
+
+		$request->session()->invalidate();
+		$request->session()->regenerateToken();
+
+		return response()->json([
+			'message' => 'Logout successful.',
+		], 200);
+	}
+
+	public function forgotPassword(ForgotPasswordRequest $request): JsonResponse
+	{
+		$validated = $request->validated();
+		$email = $validated['email'];
+
+		Password::sendResetLink(['email' => $email]);
+
+		return response()->json(['email' => $email]);
+	}
+
+	public function resetPassword(ResetPasswordRequest $request)
+	{
+		$request->validated();
+
+		Password::reset(
+			$request->only('email', 'password', 'password_confirmation', 'token'),
+			function (User $user, string $password) {
+				$user->forceFill([
+					'password' => Hash::make($password),
+				])->setRememberToken(Str::random(60));
+
+				$user->save();
+
+				event(new PasswordReset($user));
+			}
+		);
+
+		return response()->json([
+			'status' => 'Password changed successfully.',
 		], 200);
 	}
 }
