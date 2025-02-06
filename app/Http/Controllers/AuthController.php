@@ -45,12 +45,16 @@ class AuthController extends Controller
 
 		$remember = $request->has('remember') && $request->remember;
 
-		if (!Auth::guard('web')->attempt(['email' => $validated['emailOrName'], 'password' => $validated['password']], $remember) &&
-			!Auth::guard('web')->attempt(['name' => $validated['emailOrName'], 'password' => $validated['password']], $remember)) {
+		$isEmail = filter_var($validated['emailOrName'], FILTER_VALIDATE_EMAIL);
+
+		$credentials = [
+			$isEmail ? 'email' : 'name' => $validated['emailOrName'],
+			'password'                  => $validated['password'],
+		];
+
+		if (!Auth::guard('web')->attempt($credentials, $remember)) {
 			return response()->json(['message' => 'Invalid credentials'], 401);
 		}
-
-		Auth::user();
 
 		return response()->json([
 			'message' => 'Login successfully.',

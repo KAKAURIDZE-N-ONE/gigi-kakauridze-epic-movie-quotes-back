@@ -18,6 +18,6 @@ Route::view('/email/verify', 'auth.verify-email')->middleware('auth')->name('ver
 
 Route::get('/email/verify/{id}/{hash}', [EmailController::class, 'confirmEmail'])->middleware(['auth', 'signed'])->name('verification.verify');
 
-Route::get('/reset-password/{token}', function (string $token) {
-	return view('auth.reset-password', ['token' => $token]);
-})->middleware('guest')->name('password.reset');
+Route::get('/reset-password/{token}', [AuthController::class, 'resetPasswordView'])
+	->middleware('guest')
+	->name('password.reset');
