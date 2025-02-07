@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
+use Laravel\Socialite\Facades\Socialite;
 
 class AuthController extends Controller
 {
@@ -103,5 +104,37 @@ class AuthController extends Controller
 		return response()->json([
 			'status' => 'Password changed successfully.',
 		], 200);
+	}
+
+	public function redirectToGoogle()
+	{
+		$redirectUrl = Socialite::with('google')->redirect()->getTargetUrl();
+		return response()->json(['url' => $redirectUrl]);
+	}
+
+	public function handleGoogleCallback()
+	{
+		$googleUser = Socialite::with('google')->stateless()->user();
+
+		$user = User::where('email', $googleUser->getEmail())->first();
+
+		if (!$user) {
+			$user = User::create([
+				'email'             => $googleUser->getEmail(),
+				'name'              => $googleUser->getName(),
+				'google_id'         => $googleUser->getId(),
+				'avatar'            => $googleUser->getAvatar(),
+				'email_verified_at' => now(),
+			]);
+		} else {
+			$user->update([
+				'google_id'         => $googleUser->getId(),
+				'email_verified_at' => now(),
+			]);
+		}
+
+		Auth::login($user);
+
+		return redirect('http://127.0.0.1:3000');
 	}
 }
