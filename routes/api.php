@@ -3,7 +3,10 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\EmailController;
 use App\Http\Controllers\UserController;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use Laravel\Socialite\Facades\Socialite;
 
 Route::post('/sign-up', [AuthController::class, 'signUp']);
 Route::post('/log-in', [AuthController::class, 'logIn']);
@@ -21,3 +24,24 @@ Route::get('/email/verify/{id}/{hash}', [EmailController::class, 'confirmEmail']
 Route::get('/reset-password/{token}', [AuthController::class, 'resetPasswordView'])
 	->middleware('guest')
 	->name('password.reset');
+
+Route::middleware(['web', 'guest'])->get('/auth/google', function () {
+	return Socialite::driver('google')->redirect();
+})->name('google.login');
+
+Route::middleware(['web', 'guest'])->get('/auth/google/callback', function () {
+	$googleUser = Socialite::driver('google')->user();
+
+	$user = User::updateOrCreate([
+		'email' => $googleUser->email,
+	], [
+		'name'                 => $googleUser->name,
+		'google_id'            => $googleUser->id,
+		'avatar'               => $googleUser->avatar,
+		'email_verified_at'    => now(),
+	]);
+
+	Auth::login($user);
+
+	return redirect('http://127.0.0.1:3000');
+});
