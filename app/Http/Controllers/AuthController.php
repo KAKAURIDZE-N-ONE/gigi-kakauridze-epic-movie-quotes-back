@@ -118,7 +118,17 @@ class AuthController extends Controller
 
 		$user = User::where('email', $googleUser->getEmail())->first();
 
-		if (!$user) {
+		if ($user && $user->password) {
+			return response()->json([
+				'status'  => 'error',
+				'message' => 'This email is already registered with a password. Please log in normally.',
+			], 403);
+		} elseif ($user && !$user->password) {
+			$user->update([
+				'google_id'         => $googleUser->getId(),
+				'email_verified_at' => now(),
+			]);
+		} elseif (!$user) {
 			$user = User::create([
 				'email'             => $googleUser->getEmail(),
 				'name'              => $googleUser->getName(),
@@ -126,15 +136,10 @@ class AuthController extends Controller
 				'avatar'            => $googleUser->getAvatar(),
 				'email_verified_at' => now(),
 			]);
-		} else {
-			$user->update([
-				'google_id'         => $googleUser->getId(),
-				'email_verified_at' => now(),
-			]);
 		}
 
 		Auth::login($user);
 
-		return redirect('http://127.0.0.1:3000');
+		return response()->json(['status'=> 'success']);
 	}
 }
