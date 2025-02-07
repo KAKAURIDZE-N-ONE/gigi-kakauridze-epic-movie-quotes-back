@@ -21,3 +21,7 @@ Route::get('/email/verify/{id}/{hash}', [EmailController::class, 'confirmEmail']
 Route::get('/reset-password/{token}', [AuthController::class, 'resetPasswordView'])
 	->middleware('guest')
 	->name('password.reset');
+
+Route::middleware(['web', 'guest'])->get('/auth/google', [AuthController::class, 'redirectToGoogle'])->name('google.login');
+
+Route::middleware(['web', 'guest'])->get('/auth/google/callback', [AuthController::class, 'handleGoogleCallback']);
