@@ -130,16 +130,16 @@ class AuthController extends Controller
 			]);
 		} elseif (!$user) {
 			$user = User::create([
-				'email'             => $googleUser->getEmail(),
-				'name'              => $googleUser->getName(),
-				'google_id'         => $googleUser->getId(),
-				'avatar'            => $googleUser->getAvatar(),
-				'email_verified_at' => now(),
+				'email'               => $googleUser->getEmail(),
+				'name'                => $googleUser->getName(),
+				'google_idxx'         => $googleUser->getId(),
+				'avatar'              => $googleUser->getAvatar(),
+				'email_verified_at'   => now(),
 			]);
 		}
 
 		Auth::login($user);
 
-		return response()->json(['status'=> 'success']);
+		return response()->json(['status'=> 'Successfully authenticated with google']);
 	}
 }
