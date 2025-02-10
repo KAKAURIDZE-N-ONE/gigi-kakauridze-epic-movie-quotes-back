@@ -132,7 +132,7 @@ class AuthController extends Controller
 			$user = User::create([
 				'email'               => $googleUser->getEmail(),
 				'name'                => $googleUser->getName(),
-				'google_idxx'         => $googleUser->getId(),
+				'google_id'           => $googleUser->getId(),
 				'avatar'              => $googleUser->getAvatar(),
 				'email_verified_at'   => now(),
 			]);
