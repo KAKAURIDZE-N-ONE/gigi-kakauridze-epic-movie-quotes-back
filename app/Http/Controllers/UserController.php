@@ -24,10 +24,6 @@ class UserController extends Controller
 		$validated = $request->validated();
 		$user = Auth::user();
 
-		if (!$user) {
-			return response()->json(['error' => 'User not authenticated.'], 401);
-		}
-
 		$user->name = $validated['name'];
 		$user->save();
 
@@ -37,10 +33,6 @@ class UserController extends Controller
 	public function updatePassword(ChangePasswordRequest $request)
 	{
 		$user = Auth::user();
-
-		if (!$user) {
-			return response()->json(['error' => 'User not authenticated.'], 401);
-		}
 
 		$user->password = Hash::make($request->password);
 		$user->save();

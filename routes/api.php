@@ -15,10 +15,8 @@ Route::controller(AuthController::class)->group(function () {
 		Route::post('/reset-password', 'resetPassword');
 		Route::get('/reset-password/{token}', 'resetPasswordView')->name('password.reset');
 
-		Route::middleware(['web'])->group(function () {
-			Route::get('/auth/google', 'redirectToGoogle')->name('google.login');
-			Route::get('/auth/google/callback', 'handleGoogleCallback');
-		});
+		Route::get('/auth/google', 'redirectToGoogle')->name('google.login');
+		Route::get('/auth/google/callback', 'handleGoogleCallback');
 	});
 });
 
