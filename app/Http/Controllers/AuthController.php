@@ -58,7 +58,7 @@ class AuthController extends Controller
 		}
 
 		return response()->json([
-			'message' => 'Login successfully.',
+			'status' => 'Login successfully.',
 		], 200);
 	}
 
@@ -140,6 +140,6 @@ class AuthController extends Controller
 
 		Auth::login($user);
 
-		return response()->json(['status'=> 'Successfully authenticated with google']);
+		return response()->json(['status'=> 'Login successfully.']);
 	}
 }

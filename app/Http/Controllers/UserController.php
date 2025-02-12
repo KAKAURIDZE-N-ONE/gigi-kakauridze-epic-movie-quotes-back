@@ -15,7 +15,12 @@ class UserController extends Controller
 	public function getUser(): JsonResponse
 	{
 		$user = Auth::user();
-		$user->avatar = $user->avatar ? asset('storage/' . $user->avatar) : null;
+		if ($user->avatar && strpos($user->avatar, 'https://') === 0) {
+			$user->avatar = $user->avatar;
+		} else {
+			$user->avatar = $user->avatar ? asset('storage/' . $user->avatar) : null;
+		}
+
 		return response()->json($user);
 	}
 
@@ -27,7 +32,7 @@ class UserController extends Controller
 		$user->name = $validated['name'];
 		$user->save();
 
-		return response()->json(['status' => 'Changes updated succsessfully']);
+		return response()->json(['status' => 'Username updated succsessfully']);
 	}
 
 	public function updatePassword(ChangePasswordRequest $request)
@@ -37,7 +42,7 @@ class UserController extends Controller
 		$user->password = Hash::make($request->password);
 		$user->save();
 
-		return response()->json(['message' => 'Password updated successfully.'], 200);
+		return response()->json(['status' => 'Password updated successfully.'], 200);
 	}
 
 	public function updateProfileImage(UpdateProfileImageRequest $request)
