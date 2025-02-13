@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ChangePasswordRequest;
 use App\Http\Requests\UpdateProfileImageRequest;
 use App\Http\Requests\UpdateUsernameRequest;
+use App\Http\Resources\UserResource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -15,8 +16,8 @@ class UserController extends Controller
 	public function getUser(): JsonResponse
 	{
 		$user = Auth::user();
-		$user->avatar = $user->avatar ? asset('storage/' . $user->avatar) : null;
-		return response()->json($user);
+
+		return response()->json(new UserResource($user));
 	}
 
 	public function updateUsername(UpdateUsernameRequest $request): JsonResponse
@@ -27,7 +28,7 @@ class UserController extends Controller
 		$user->name = $validated['name'];
 		$user->save();
 
-		return response()->json(['status' => 'Changes updated succsessfully']);
+		return response()->json(['status' => 'Username updated succsessfully']);
 	}
 
 	public function updatePassword(ChangePasswordRequest $request)
@@ -37,7 +38,7 @@ class UserController extends Controller
 		$user->password = Hash::make($request->password);
 		$user->save();
 
-		return response()->json(['message' => 'Password updated successfully.'], 200);
+		return response()->json(['status' => 'Password updated successfully.'], 200);
 	}
 
 	public function updateProfileImage(UpdateProfileImageRequest $request)
