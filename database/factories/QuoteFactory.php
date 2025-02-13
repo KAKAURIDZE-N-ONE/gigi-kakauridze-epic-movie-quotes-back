@@ -27,10 +27,10 @@ class QuoteFactory extends Factory
 
 		return [
 			'movie_id'    => Movie::factory(),
-			'quote'       => json_encode([
+			'quote'       => [
 				'en' => fake('en_US')->text(),
 				'ka' => fake('ka_GE')->realText(),
-			]),
+			],
 			'image'       => 'images/' . $imageName,
 		];
 	}

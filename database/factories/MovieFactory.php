@@ -26,21 +26,19 @@ class MovieFactory extends Factory
 		Storage::disk('public')->put('images/' . $imageName, $imageContents);
 
 		return [
-			'name' => json_encode(
-				[
-					'en' => fake('en_US')->name(),
-					'ka' => fake('ka_GE')->name(),
-				]
-			),
-			'year'     => fake()->year(),
-			'director' => json_encode([
+			'name' => [
 				'en' => fake('en_US')->name(),
 				'ka' => fake('ka_GE')->name(),
-			]),
-			'description' => json_encode([
+			],
+			'year'     => fake()->year(),
+			'director' => [
+				'en' => fake('en_US')->name(),
+				'ka' => fake('ka_GE')->name(),
+			],
+			'description' => [
 				'en' => fake('en_US')->text(),
 				'ka' => fake('ka_GE')->realText(),
-			]),
+			],
 			'image'       => 'images/' . $imageName,
 			'user_id'     => User::factory(),
 		];

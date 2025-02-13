@@ -21,6 +21,12 @@ class Movie extends Model
 		'user_id',
 	];
 
+	protected $casts = [
+		'name'        => 'array',
+		'director'    => 'array',
+		'description' => 'array',
+	];
+
 	public function user(): BelongsTo
 	{
 		return $this->belongsTo(User::class);

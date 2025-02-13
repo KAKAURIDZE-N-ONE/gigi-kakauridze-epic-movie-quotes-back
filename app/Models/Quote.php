@@ -16,6 +16,10 @@ class Quote extends Model
 		'image',
 	];
 
+	protected $casts = [
+		'quote'        => 'array',
+	];
+
 	public function movie(): BelongsTo
 	{
 		return $this->belongsTo(Movie::class);

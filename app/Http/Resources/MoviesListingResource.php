@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Storage;
 
 class MoviesListingResource extends JsonResource
 {
@@ -18,7 +19,7 @@ class MoviesListingResource extends JsonResource
 			'id'           => $this->id,
 			'name'         => $this->name,
 			'year'         => $this->year,
-			'image'        => $this->image ? asset('storage/' . $this->image) : null,
+			'image'        => Storage::url($this->image),
 			'quotes_count' => $this->quotes_count,
 		];
 	}

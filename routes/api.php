@@ -21,17 +21,23 @@ Route::controller(AuthController::class)->group(function () {
 	});
 });
 
-Route::middleware(['auth:sanctum', 'verified:sanctum'])->controller(MovieController::class)->group(function () {
-	Route::get('/movies', 'getMovies');
-	Route::get('/movies/{movie}', 'getMovie');
-});
+Route::middleware(['auth:sanctum', 'verified:sanctum'])
+	->prefix('movies')
+	->controller(MovieController::class)
+	->group(function () {
+		Route::get('/', 'getMovies');
+		Route::get('/{movie}', 'getMovie');
+	});
 
-Route::middleware(['auth:sanctum', 'verified:sanctum'])->controller(UserController::class)->group(function () {
-	Route::get('/user', 'getUser');
-	Route::post('/user/profile-image', 'updateProfileImage');
-	Route::patch('/user/username', 'updateUsername');
-	Route::patch('/user/password', 'updatePassword');
-});
+Route::middleware(['auth:sanctum', 'verified:sanctum'])
+	->prefix('user')
+	->controller(UserController::class)
+	->group(function () {
+		Route::get('/', 'getUser');
+		Route::post('/profile-image', 'updateProfileImage');
+		Route::patch('/username', 'updateUsername');
+		Route::patch('/password', 'updatePassword');
+	});
 
 Route::get('/email/verify/{id}/{hash}', [EmailController::class, 'confirmEmail'])->middleware(['auth', 'signed'])->name('verification.verify');
 Route::view('/email/verify', 'auth.verify-email')->middleware('auth')->name('verification.notice');

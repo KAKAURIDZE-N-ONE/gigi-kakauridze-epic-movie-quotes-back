@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ChangePasswordRequest;
 use App\Http\Requests\UpdateProfileImageRequest;
 use App\Http\Requests\UpdateUsernameRequest;
+use App\Http\Resources\UserResource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -15,13 +16,8 @@ class UserController extends Controller
 	public function getUser(): JsonResponse
 	{
 		$user = Auth::user();
-		if ($user->avatar && strpos($user->avatar, 'https://') === 0) {
-			$user->avatar = $user->avatar;
-		} else {
-			$user->avatar = $user->avatar ? asset('storage/' . $user->avatar) : null;
-		}
 
-		return response()->json($user);
+		return response()->json(new UserResource($user));
 	}
 
 	public function updateUsername(UpdateUsernameRequest $request): JsonResponse
