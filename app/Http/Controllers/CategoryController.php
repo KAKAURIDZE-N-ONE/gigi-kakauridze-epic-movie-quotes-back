@@ -7,7 +7,7 @@ use Illuminate\Http\JsonResponse;
 
 class CategoryController extends Controller
 {
-	public function getCategories(): JsonResponse
+	public function index(): JsonResponse
 	{
 		$categories = Category::all();
 

@@ -13,7 +13,7 @@ class MovieController extends Controller
 {
 	use AuthorizesRequests;
 
-	public function getMovies(): JsonResponse
+	public function index(): JsonResponse
 	{
 		$user = Auth::user();
 		$movies = $user->movies()->withCount('quotes')->get();
@@ -24,7 +24,7 @@ class MovieController extends Controller
 		]);
 	}
 
-	public function getMovie(Movie $movie): JsonResponse
+	public function show(Movie $movie): JsonResponse
 	{
 		$this->authorize('view', $movie);
 

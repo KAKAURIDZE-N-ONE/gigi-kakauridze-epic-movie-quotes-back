@@ -36,16 +36,15 @@ Route::middleware(['auth:sanctum', 'verified:sanctum'])
 	->prefix('movies')
 	->controller(MovieController::class)
 	->group(function () {
-		Route::get('/', 'getMovies');
-		Route::get('/{movie}', 'getMovie');
-		Route::get('/{movie}/categories', 'getMovieCategories');
+		Route::get('/', 'index');
+		Route::get('/{movie}', 'show');
 	});
 
 Route::middleware(['auth:sanctum', 'verified:sanctum'])
 ->prefix('categories')
 ->controller(CategoryController::class)
 ->group(function () {
-	Route::get('/', 'getCategories');
+	Route::get('/', 'index');
 });
 
 Route::get('/email/verify/{id}/{hash}', [EmailController::class, 'confirmEmail'])->middleware(['auth', 'signed'])->name('verification.verify');
