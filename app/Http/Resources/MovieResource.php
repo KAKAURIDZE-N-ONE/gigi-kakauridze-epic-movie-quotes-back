@@ -21,6 +21,10 @@ class MovieResource extends JsonResource
 			'year'         => $this->year,
 			'image'        => $this->image ? Storage::url($this->image) : null,
 			'categories'   => $this->categories,
+			'director'     => $this->director,
+			'description'  => $this->description,
+			'image'        => Storage::url($this->image),
+			'quotes'       => QuoteResource::collection($this->quotes),
 		];
 	}
 }

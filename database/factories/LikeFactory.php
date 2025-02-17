@@ -2,12 +2,14 @@
 
 namespace Database\Factories;
 
+use App\Models\Quote;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Category>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Like>
  */
-class CategoryFactory extends Factory
+class LikeFactory extends Factory
 {
 	/**
 	 * Define the model's default state.
@@ -17,10 +19,8 @@ class CategoryFactory extends Factory
 	public function definition(): array
 	{
 		return [
-			'name' => [
-				'en' => fake('en_US')->name(),
-				'ka' => fake('ka_GE')->name(),
-			],
+			'user_id'  => User::factory(),
+			'quote_id' => Quote::factory(),
 		];
 	}
 }
