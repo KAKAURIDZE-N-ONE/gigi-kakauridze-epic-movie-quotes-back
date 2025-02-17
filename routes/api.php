@@ -47,5 +47,7 @@ Route::middleware(['auth:sanctum', 'verified:sanctum'])
 	Route::get('/', 'index');
 });
 
+//gela barkalaia
+
 Route::get('/email/verify/{id}/{hash}', [EmailController::class, 'confirmEmail'])->middleware(['auth', 'signed'])->name('verification.verify');
 Route::view('/email/verify', 'auth.verify-email')->middleware('auth')->name('verification.notice');
