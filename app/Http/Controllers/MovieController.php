@@ -28,7 +28,10 @@ class MovieController extends Controller
 	{
 		$this->authorize('view', $movie);
 
-		$movie->load('categories');
+		$movie->load([
+			'categories',
+			'quotes' => fn ($query) => $query->withCount(['likes', 'comments']),
+		]);
 
 		return response()->json([
 			'status' => 'Movie retrieved successfully!',

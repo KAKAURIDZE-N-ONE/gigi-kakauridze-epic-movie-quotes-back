@@ -14,6 +14,10 @@ class Category extends Model
 		'name',
 	];
 
+	protected $casts = [
+		'name'        => 'array',
+	];
+
 	public function movies(): BelongsToMany
 	{
 		return $this->belongsToMany(Movie::class);
