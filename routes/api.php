@@ -38,6 +38,9 @@ Route::middleware(['auth:sanctum', 'verified:sanctum'])
 	->group(function () {
 		Route::get('/', 'index');
 		Route::get('/{movie}', 'show');
+		Route::post('/', 'store');
+		Route::delete('/{movie}', 'destroy');
+		Route::patch('/{movie}', 'update');
 	});
 
 Route::middleware(['auth:sanctum', 'verified:sanctum'])
