@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreMovieRequest;
+use App\Http\Requests\UpdateMovieRequest;
 use App\Http\Resources\MovieResource;
 use App\Http\Resources\MoviesListingResource;
 use App\Models\Movie;
@@ -16,7 +18,10 @@ class MovieController extends Controller
 	public function index(): JsonResponse
 	{
 		$user = Auth::user();
-		$movies = $user->movies()->withCount('quotes')->get();
+		$movies = $user->movies()
+			->withCount('quotes')
+			->orderBy('created_at', 'desc')
+			->get();
 
 		return response()->json([
 			'status' => 'Movies retrieved successfully!',
@@ -36,6 +41,60 @@ class MovieController extends Controller
 		return response()->json([
 			'status' => 'Movie retrieved successfully!',
 			'data'   => new MovieResource($movie),
+		]);
+	}
+
+	public function store(StoreMovieRequest $request): JsonResponse
+	{
+		$validated = $request->validated();
+
+		$imagePath = null;
+		if ($request->hasFile('image')) {
+			$imagePath = $request->file('image')->store('movies', 'public');
+		}
+
+		$newMovie = Movie::create([
+			'name'        => $validated['name'],
+			'year'        => $validated['year'],
+			'director'    => $validated['director'],
+			'description' => $validated['description'],
+			'image'       => $imagePath,
+			'user_id'     => Auth::user()->id,
+		]);
+
+		$newMovie->categories()->attach($validated['categories']);
+
+		return response()->json([
+			'status'  => 'Data saved succesfully',
+			'movie'   => $newMovie,
+		]);
+	}
+
+	public function update(UpdateMovieRequest $request, Movie $movie): JsonResponse
+	{
+		$validatedData = $request->validated();
+
+		if ($request->hasFile('image')) {
+			$imagePath = $request->file('image')->store('movies', 'public');
+			$validatedData['image'] = $imagePath;
+		}
+
+		$movie->categories()->sync($validatedData['categories']);
+
+		$movie->update($validatedData);
+
+		return response()->json([
+			'status' => 'Movie updated successfully!',
+			'movie'  => $movie,
+		]);
+	}
+
+	public function destroy(Movie $movie): JsonResponse
+	{
+		$movie->delete();
+
+		return response()->json([
+			'status' => 'Movie deleted successfully',
 		]);
 	}
 }
