@@ -10,7 +10,6 @@ use App\Models\Movie;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
 
 class MovieController extends Controller
 {
@@ -63,9 +62,7 @@ class MovieController extends Controller
 			'user_id'     => Auth::user()->id,
 		]);
 
-		if (isset($validated['categories']) && is_array($validated['categories'])) {
-			$newMovie->categories()->attach($validated['categories']);
-		}
+		$newMovie->categories()->attach($validated['categories']);
 
 		return response()->json([
 			'status'  => 'Data saved succesfully',
@@ -78,16 +75,11 @@ class MovieController extends Controller
 		$validatedData = $request->validated();
 
 		if ($request->hasFile('image')) {
-			if ($movie->image) {
-				Storage::disk('public')->delete($movie->image);
-			}
-
-			$validatedData['image'] = $request->file('image')->store('movies', 'public');
+			$imagePath = $request->file('image')->store('movies', 'public');
+			$validatedData['image'] = $imagePath;
 		}
 
-		if (isset($validatedData['categories']) && is_array($validatedData['categories'])) {
-			$movie->categories()->sync($validatedData['categories']);
-		}
+		$movie->categories()->sync($validatedData['categories']);
 
 		$movie->update($validatedData);
 
