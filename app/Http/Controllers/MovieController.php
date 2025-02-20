@@ -35,7 +35,7 @@ class MovieController extends Controller
 
 		$movie->load([
 			'categories',
-			'quotes' => fn ($query) => $query->withCount(['likes', 'comments']),
+			'quotes' => fn ($query) => $query->withCount(['likes', 'comments'])->orderBy('created_at', 'desc'),
 		]);
 
 		return response()->json([
@@ -48,10 +48,7 @@ class MovieController extends Controller
 	{
 		$validated = $request->validated();
 
-		$imagePath = null;
-		if ($request->hasFile('image')) {
-			$imagePath = $request->file('image')->store('movies', 'public');
-		}
+		$imagePath = $request->file('image')->store('movies', 'public');
 
 		$newMovie = Movie::create([
 			'name'        => $validated['name'],
