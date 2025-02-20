@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\EmailController;
 use App\Http\Controllers\MovieController;
+use App\Http\Controllers\QuoteController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -42,6 +43,17 @@ Route::middleware(['auth:sanctum', 'verified:sanctum'])
 		Route::delete('/{movie}', 'destroy');
 		Route::patch('/{movie}', 'update');
 	});
+
+Route::middleware(['auth:sanctum', 'verified:sanctum'])
+->prefix('quotes')
+->controller(QuoteController::class)
+->group(function () {
+	// Route::get('/', 'index');
+	// Route::get('/{movie}', 'show');
+	Route::post('/', 'store');
+	// Route::delete('/{movie}', 'destroy');
+	// Route::patch('/{movie}', 'update');
+});
 
 Route::middleware(['auth:sanctum', 'verified:sanctum'])
 ->prefix('categories')
