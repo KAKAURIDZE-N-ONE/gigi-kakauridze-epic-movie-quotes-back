@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreMovieRequest;
 use App\Http\Requests\UpdateMovieRequest;
 use App\Http\Resources\MovieResource;
+use App\Http\Resources\MovieShortResource;
 use App\Http\Resources\MoviesListingResource;
 use App\Models\Movie;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -19,6 +20,7 @@ class MovieController extends Controller
 	{
 		$user = Auth::user();
 		$movies = $user->movies()
+			->with(['media'])
 			->withCount('quotes')
 			->orderBy('created_at', 'desc')
 			->get();
@@ -34,8 +36,9 @@ class MovieController extends Controller
 		$this->authorize('view', $movie);
 
 		$movie->load([
+			'media',
 			'categories',
-			'quotes' => fn ($query) => $query->withCount(['likes', 'comments'])->orderBy('created_at', 'desc'),
+			'quotes' => fn ($query) => $query->with(['media'])->withCount(['likes', 'comments'])->orderBy('created_at', 'desc'),
 		]);
 
 		return response()->json([
@@ -44,20 +47,30 @@ class MovieController extends Controller
 		]);
 	}
 
+	public function showShort(Movie $movie): JsonResponse
+	{
+		$this->authorize('view', $movie);
+
+		return response()->json([
+			'status' => 'Movie retrieved successfully!',
+			'data'   => new MovieShortResource($movie),
+		]);
+	}
+
 	public function store(StoreMovieRequest $request): JsonResponse
 	{
 		$validated = $request->validated();
-
-		$imagePath = $request->file('image')->store('movies', 'public');
 
 		$newMovie = Movie::create([
 			'name'        => $validated['name'],
 			'year'        => $validated['year'],
 			'director'    => $validated['director'],
 			'description' => $validated['description'],
-			'image'       => $imagePath,
 			'user_id'     => Auth::user()->id,
 		]);
+
+		$newMovie->addMedia($request->file('image'))
+		->toMediaCollection('images', 'public');
 
 		$newMovie->categories()->attach($validated['categories']);
 
@@ -72,8 +85,9 @@ class MovieController extends Controller
 		$validatedData = $request->validated();
 
 		if ($request->hasFile('image')) {
-			$imagePath = $request->file('image')->store('movies', 'public');
-			$validatedData['image'] = $imagePath;
+			$movie->clearMediaCollection('images');
+			$movie->addMedia($request->file('image'))
+				  ->toMediaCollection('images', 'public');
 		}
 
 		$movie->categories()->sync($validatedData['categories']);

@@ -16,11 +16,7 @@ class UserResource extends JsonResource
 	{
 		$user = parent::toArray($request);
 
-		if ($this->avatar && strpos($this->avatar, 'https://') === 0) {
-			$user['avatar'] = $this->avatar;
-		} else {
-			$user['avatar'] = $this->avatar ? asset('storage/' . $this->avatar) : null;
-		}
+		$user['avatar'] = $this->getFirstMediaUrl('images');
 
 		return $user;
 	}

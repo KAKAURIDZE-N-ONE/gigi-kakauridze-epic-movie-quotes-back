@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\EmailController;
 use App\Http\Controllers\MovieController;
 use App\Http\Controllers\QuoteController;
@@ -39,6 +40,7 @@ Route::middleware(['auth:sanctum', 'verified:sanctum'])
 	->group(function () {
 		Route::get('/', 'index');
 		Route::get('/{movie}', 'show');
+		Route::get('/{movie}/short', 'showShort');
 		Route::post('/', 'store');
 		Route::delete('/{movie}', 'destroy');
 		Route::patch('/{movie}', 'update');
@@ -48,11 +50,18 @@ Route::middleware(['auth:sanctum', 'verified:sanctum'])
 ->prefix('quotes')
 ->controller(QuoteController::class)
 ->group(function () {
-	// Route::get('/', 'index');
-	// Route::get('/{movie}', 'show');
+	Route::get('/', 'index');
+	Route::get('/{quote}', 'show');
 	Route::post('/', 'store');
-	// Route::delete('/{movie}', 'destroy');
-	// Route::patch('/{movie}', 'update');
+	Route::delete('/{quote}', 'destroy');
+	Route::patch('/{quote}', 'update');
+});
+
+Route::middleware(['auth:sanctum', 'verified:sanctum'])
+->prefix('comments')
+->controller(CommentController::class)
+->group(function () {
+	Route::post('/', 'store');
 });
 
 Route::middleware(['auth:sanctum', 'verified:sanctum'])

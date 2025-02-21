@@ -9,7 +9,6 @@ use App\Http\Resources\UserResource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
@@ -46,19 +45,16 @@ class UserController extends Controller
 		$user = Auth::user();
 
 		if ($request->hasFile('avatar')) {
-			$file = $request->file('avatar');
-			$path = $file->store('avatars', 'public');
+			$user->clearMediaCollection('images');
 
-			if ($user->avatar) {
-				Storage::disk('public')->delete($user->avatar);
-			}
+			$user->addMedia($request->file('avatar'))
+				  ->toMediaCollection('images', 'public');
 
-			$user->avatar = $path;
-			$user->save();
+			$avatarUrl = $user->getFirstMediaUrl('images');
 
 			return response()->json([
 				'status'     => 'Avatar updated successfully',
-				'avatar_url' => asset('storage/' . $path),
+				'avatar_url' => asset('storage/' . $avatarUrl),
 			]);
 		}
 

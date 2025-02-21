@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class MovieResource extends JsonResource
+class MovieShortResource extends JsonResource
 {
 	/**
 	 * Transform the resource into an array.
@@ -21,8 +21,6 @@ class MovieResource extends JsonResource
 			'image'          => $this->getFirstMediaUrl('images'),
 			'categories'     => $this->categories,
 			'director'       => $this->director,
-			'description'    => $this->description,
-			'quotes'         => QuoteResource::collection($this->quotes),
 		];
 	}
 }

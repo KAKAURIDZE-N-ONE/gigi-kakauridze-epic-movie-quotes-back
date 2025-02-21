@@ -7,9 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
-class Movie extends Model
+class Movie extends Model implements HasMedia
 {
+	use InteractsWithMedia;
+
 	use HasFactory;
 
 	protected $fillable = [
@@ -17,7 +21,6 @@ class Movie extends Model
 		'year',
 		'director',
 		'description',
-		'image',
 		'user_id',
 	];
 

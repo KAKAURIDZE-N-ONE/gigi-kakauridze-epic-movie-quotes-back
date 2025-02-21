@@ -128,14 +128,23 @@ class AuthController extends Controller
 				'google_id'         => $googleUser->getId(),
 				'email_verified_at' => now(),
 			]);
+
+			$url = $googleUser->getAvatar();
+			$user
+			->addMediaFromUrl($url)
+			->toMediaCollection('images', 'public');
 		} elseif (!$user) {
 			$user = User::create([
 				'email'               => $googleUser->getEmail(),
 				'name'                => $googleUser->getName(),
 				'google_id'           => $googleUser->getId(),
-				'avatar'              => $googleUser->getAvatar(),
 				'email_verified_at'   => now(),
 			]);
+
+			$url = $googleUser->getAvatar();
+			$user
+			->addMediaFromUrl($url)
+			->toMediaCollection('images', 'public');
 		}
 
 		Auth::login($user);
