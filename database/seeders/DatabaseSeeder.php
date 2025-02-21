@@ -58,7 +58,7 @@ class DatabaseSeeder extends Seeder
 		}
 
 		foreach ($quotes2 as $quote) {
-			Comment::factory(rand(3, 10))->create([
+			Comment::factory(rand(1, 3))->create([
 				'quote_id' => $quote->id,
 			]);
 		}

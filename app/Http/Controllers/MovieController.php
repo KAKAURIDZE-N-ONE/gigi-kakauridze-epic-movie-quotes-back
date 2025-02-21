@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreMovieRequest;
 use App\Http\Requests\UpdateMovieRequest;
 use App\Http\Resources\MovieResource;
+use App\Http\Resources\MovieShortResource;
 use App\Http\Resources\MoviesListingResource;
 use App\Models\Movie;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -44,11 +45,21 @@ class MovieController extends Controller
 		]);
 	}
 
+	public function showShort(Movie $movie): JsonResponse
+	{
+		$this->authorize('view', $movie);
+
+		return response()->json([
+			'status' => 'Movie retrieved successfully!',
+			'data'   => new MovieShortResource($movie),
+		]);
+	}
+
 	public function store(StoreMovieRequest $request): JsonResponse
 	{
 		$validated = $request->validated();
 
-		$imagePath = $request->file('image')->store('movies', 'public');
+		$imagePath = $request->file('image')->store('images', 'public');
 
 		$newMovie = Movie::create([
 			'name'        => $validated['name'],
@@ -72,7 +83,7 @@ class MovieController extends Controller
 		$validatedData = $request->validated();
 
 		if ($request->hasFile('image')) {
-			$imagePath = $request->file('image')->store('movies', 'public');
+			$imagePath = $request->file('image')->store('images', 'public');
 			$validatedData['image'] = $imagePath;
 		}
 
