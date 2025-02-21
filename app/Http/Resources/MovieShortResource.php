@@ -18,7 +18,7 @@ class MovieShortResource extends JsonResource
 			'id'             => $this->id,
 			'name'           => $this->name,
 			'year'           => $this->year,
-			'image'          => $this->getFirstMediaUrl('images'), // ✅ Fix: Load image from Spatie Media Library
+			'image'          => $this->getFirstMediaUrl('images'),
 			'categories'     => $this->categories,
 			'director'       => $this->director,
 		];
