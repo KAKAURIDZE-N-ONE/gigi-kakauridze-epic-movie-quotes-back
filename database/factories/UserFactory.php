@@ -4,8 +4,6 @@ namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 /**
@@ -25,13 +23,7 @@ class UserFactory extends Factory
 	 */
 	public function definition(): array
 	{
-		$imageName = Str::random(16) . '.png';
-		$imageUrl = 'https://picsum.photos/200/300?random=' . Str::uuid();
-		$imageContents = Http::get($imageUrl)->body();
-		Storage::disk('public')->put('images/' . $imageName, $imageContents);
-
 		return [
-			'avatar'            => $imageUrl,
 			'name'              => fake()->name(),
 			'email'             => fake()->unique()->safeEmail(),
 			'email_verified_at' => now(),

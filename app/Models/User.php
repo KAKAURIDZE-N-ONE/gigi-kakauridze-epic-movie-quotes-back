@@ -13,9 +13,13 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
-class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
+class User extends Authenticatable implements MustVerifyEmail, CanResetPassword, HasMedia
 {
+	use InteractsWithMedia;
+
 	/** @use HasFactory<\Database\Factories\UserFactory> */
 	use HasFactory, Notifiable, HasApiTokens;
 
@@ -28,7 +32,6 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
 		'name',
 		'email',
 		'password',
-		'avatar',
 		'google_id',
 		'email_verified_at',
 	];

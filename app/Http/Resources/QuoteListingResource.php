@@ -4,7 +4,6 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Facades\Storage;
 
 class QuoteListingResource extends JsonResource
 {
@@ -17,13 +16,13 @@ class QuoteListingResource extends JsonResource
 	{
 		return [
 			'id'    => $this->id,
-			'image' => Storage::url($this->image),
+			'image' => $this->getFirstMediaUrl('images'),
 			'quote' => $this->quote,
 			'movie' => [
 				'name' => $this->movie->name,
 				'year' => $this->movie->year,
 				'user' => [
-					'avatar' => $this->getAvatarUrl($this->movie->user->avatar),
+					'avatar' => $this->getAvatarUrl($this->movie->user),
 					'name'   => $this->movie->user->name,
 				],
 			],
@@ -32,12 +31,8 @@ class QuoteListingResource extends JsonResource
 		];
 	}
 
-	private function getAvatarUrl(?string $avatar): ?string
+	private function getAvatarUrl($user): ?string
 	{
-		if ($avatar && strpos($avatar, 'https://') === 0) {
-			return $avatar;
-		}
-
-		return $avatar ? Storage::url($avatar) : null;
+		return $user->getFirstMediaUrl('images') ?: null;
 	}
 }

@@ -18,9 +18,14 @@ class CommentResource extends JsonResource
 			'comment'    => $this->comment,
 			'id'         => $this->id,
 			'user'       => [
-				'avatar' => $this->user->avatar,
+				'avatar' => $this->getUserAvatar($this->user),
 				'name'   => $this->user->name,
 			],
 		];
+	}
+
+	private function getUserAvatar($user): ?string
+	{
+		return $user->getFirstMediaUrl('images') ?: null;
 	}
 }

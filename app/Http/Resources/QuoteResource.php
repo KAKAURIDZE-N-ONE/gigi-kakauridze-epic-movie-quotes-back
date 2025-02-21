@@ -4,7 +4,6 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Facades\Storage;
 
 class QuoteResource extends JsonResource
 {
@@ -18,7 +17,7 @@ class QuoteResource extends JsonResource
 		return [
 			'id'             => $this->id,
 			'quote'          => $this->quote,
-			'image'          => Storage::url($this->image),
+			'image'          => $this->getFirstMediaUrl('images'), // ✅ Fix: Load image from Spatie Media Library
 			'likes_count'    => $this->likes_count,
 			'comments_count' => $this->comments_count,
 		];

@@ -37,13 +37,13 @@ class QuoteController extends Controller
 	{
 		$validated = $request->validated();
 
-		$imagePath = $request->file('image')->store('images', 'public');
-
 		$newQuote = Quote::create([
 			'quote'    => $validated['quote'],
 			'movie_id' => $validated['movie_id'],
-			'image'    => $imagePath,
 		]);
+
+		$newQuote->addMedia($request->file('image'))
+		->toMediaCollection('images', 'public');
 
 		return response()->json([
 			'status'  => 'Data saved succesfully',
@@ -56,11 +56,15 @@ class QuoteController extends Controller
 		$validated = $request->validated();
 
 		if ($request->hasFile('image')) {
-			$imagePath = $request->file('image')->store('images', 'public');
-			$validated['image'] = $imagePath;
+			$quote->clearMediaCollection('images');
+			$quote->addMedia($request->file('image'))
+				  ->toMediaCollection('images', 'public');
 		}
 
-		$quote->update($validated);
+		$quote->update([
+			'movie_id' => $validated['movie_id'],
+			'quote'    => $validated['quote'],
+		]);
 
 		return response()->json([
 			'status' => 'Quote updated successfully!',
