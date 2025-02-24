@@ -31,17 +31,6 @@ class MovieController extends Controller
 		]);
 	}
 
-	public function indexShort(): JsonResponse
-	{
-		$user = Auth::user();
-		$movies = $user->movies()->get();
-
-		return response()->json([
-			'status' => 'Movies short descriptions retrieved successfully!',
-			'data'   => MovieShortResource::collection($movies),
-		]);
-	}
-
 	public function show(Movie $movie): JsonResponse
 	{
 		$this->authorize('view', $movie);
