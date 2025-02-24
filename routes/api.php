@@ -39,6 +39,7 @@ Route::middleware(['auth:sanctum', 'verified:sanctum'])
 	->controller(MovieController::class)
 	->group(function () {
 		Route::get('/', 'index');
+		Route::get('/short', 'indexShort');
 		Route::get('/{movie}', 'show');
 		Route::get('/{movie}/short', 'showShort');
 		Route::post('/', 'store');

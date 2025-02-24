@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\CommentAdded;
 use App\Http\Requests\StoreCommentRequest;
 use App\Models\Comment;
 use Illuminate\Http\JsonResponse;
@@ -12,7 +13,9 @@ class CommentController extends Controller
 	{
 		$validated = $request->validated();
 
-		Comment::create($validated);
+		$comment = Comment::create($validated);
+
+		event(new CommentAdded($comment));
 
 		return response()->json([
 			'status'  => 'Comment added successfully!',
