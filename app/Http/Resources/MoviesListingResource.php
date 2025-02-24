@@ -18,6 +18,7 @@ class MoviesListingResource extends JsonResource
 			'id'           => $this->id,
 			'name'         => $this->name,
 			'year'         => $this->year,
+			'director'     => $this->director,
 			'image'        => $this->getFirstMediaUrl('images'),
 			'quotes_count' => $this->quotes_count,
 		];

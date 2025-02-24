@@ -20,4 +20,9 @@ class Comment extends Model
 	{
 		return $this->belongsTo(User::class);
 	}
+
+	public function quote(): BelongsTo
+	{
+		return $this->belongsTo(Quote::class);
+	}
 }
