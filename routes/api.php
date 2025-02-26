@@ -5,6 +5,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\EmailController;
 use App\Http\Controllers\MovieController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\QuoteController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -69,6 +70,15 @@ Route::middleware(['auth:sanctum', 'verified:sanctum'])
 ->controller(CategoryController::class)
 ->group(function () {
 	Route::get('/', 'index');
+});
+
+Route::middleware(['auth:sanctum', 'verified:sanctum'])
+->prefix('notifications')
+->controller(NotificationController::class)
+->group(function () {
+	Route::get('/', 'notifications');
+	Route::post('/mark-all-as-read', 'markAllNotificationsAsRead');
+	Route::post('/mark-as-read/{id}', 'markNotificationAsRead');
 });
 
 Route::get('/email/verify/{id}/{hash}', [EmailController::class, 'confirmEmail'])->middleware(['auth', 'signed'])->name('verification.verify');
