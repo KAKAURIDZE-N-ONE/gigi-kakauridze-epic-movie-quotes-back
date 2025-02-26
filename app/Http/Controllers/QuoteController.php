@@ -15,7 +15,7 @@ class QuoteController extends Controller
 		$quotes = Quote::with(['movie.user', 'comments.user'])
 		->withCount('likes')
 		->orderBy('created_at', 'desc')
-		->paginate(10);
+		->paginate(6);
 
 		return response()->json([
 			'status' => 'Quotes retrieved successfully!',
