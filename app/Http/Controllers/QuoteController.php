@@ -7,13 +7,21 @@ use App\Http\Requests\UpdateQuoteRequest;
 use App\Http\Resources\QuoteListingResource;
 use App\Models\Quote;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
 
 class QuoteController extends Controller
 {
 	public function index(): JsonResponse
 	{
+		$user = Auth::user();
+
 		$quotes = Quote::with(['movie.user', 'comments.user'])
-		->withCount('likes')
+		->withCount(['likes' => function ($query) {
+			$query->where('active', true);
+		}])
+		->with(['likes' => function ($query) use ($user) {
+			$query->where('user_id', $user->id);
+		}])
 		->orderBy('created_at', 'desc')
 		->paginate(6);
 
@@ -25,7 +33,9 @@ class QuoteController extends Controller
 
 	public function show(Quote $quote): JsonResponse
 	{
-		$quote->load(['movie.user', 'comments.user'])->loadCount('likes');
+		$quote->load(['movie.user', 'comments.user'])->loadCount(['likes' => function ($query) {
+			$query->where('active', true);
+		}]);
 
 		return response()->json([
 			'status' => 'Quote retrieved successfully!',

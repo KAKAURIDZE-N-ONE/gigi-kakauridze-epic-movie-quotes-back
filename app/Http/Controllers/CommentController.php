@@ -8,6 +8,7 @@ use App\Models\Comment;
 use App\Models\User;
 use App\Notifications\CommentNotification;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
 
 class CommentController extends Controller
 {
@@ -19,7 +20,7 @@ class CommentController extends Controller
 
 		$postOwner = User::find($comment->quote->movie->user_id);
 
-		if ($postOwner && $postOwner->id !== auth()->id()) {
+		if ($postOwner && $postOwner->id !== Auth::id()) {
 			$postOwner->notify(new CommentNotification($comment));
 		}
 

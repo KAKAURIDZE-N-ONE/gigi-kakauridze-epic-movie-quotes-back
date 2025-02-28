@@ -38,7 +38,12 @@ class MovieController extends Controller
 		$movie->load([
 			'media',
 			'categories',
-			'quotes' => fn ($query) => $query->with(['media'])->withCount(['likes', 'comments'])->orderBy('created_at', 'desc'),
+			'quotes' => fn ($query) => $query
+			->with(['media'])
+			->withCount(['likes' => function ($query) {
+				$query->where('active', true);
+			}, 'comments'])
+			->orderBy('created_at', 'desc'),
 		]);
 
 		return response()->json([

@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\EmailController;
+use App\Http\Controllers\LikeController;
 use App\Http\Controllers\MovieController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\QuoteController;
@@ -63,6 +64,14 @@ Route::middleware(['auth:sanctum', 'verified:sanctum'])
 ->controller(CommentController::class)
 ->group(function () {
 	Route::post('/', 'store');
+});
+
+Route::middleware(['auth:sanctum', 'verified:sanctum'])
+->prefix('likes')
+->controller(LikeController::class)
+->group(function () {
+	Route::post('/', 'store');
+	Route::patch('/{like}', 'update');
 });
 
 Route::middleware(['auth:sanctum', 'verified:sanctum'])

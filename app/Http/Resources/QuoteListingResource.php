@@ -26,8 +26,9 @@ class QuoteListingResource extends JsonResource
 					'name'   => $this->movie->user->name,
 				],
 			],
-			'likes_count'  => $this->likes_count,
-			'comments'     => CommentResource::collection($this->comments),
+			'likes_count'       => $this->likes_count,
+			'current_user_like' => new LikeResource($this->likes->first()),
+			'comments'          => CommentResource::collection($this->comments),
 		];
 	}
 
