@@ -51,6 +51,7 @@ class CommentNotification extends Notification implements ShouldQueue
 	public function toBroadcast(object $notifiable): BroadcastMessage
 	{
 		return new BroadcastMessage([
+			'id'               => $this->id,
 			'comment_id'       => $this->comment->id,
 			'quote_id'         => $this->comment->quote->id,
 			'movie_id'         => $this->comment->quote->movie->id,
