@@ -7,35 +7,56 @@ use App\Http\Requests\UpdateQuoteRequest;
 use App\Http\Resources\QuoteListingResource;
 use App\Models\Quote;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class QuoteController extends Controller
 {
-	public function index(): JsonResponse
+	public function index(Request $request): JsonResponse
 	{
 		$user = Auth::user();
 
-		$quotes = Quote::with(['movie.user', 'comments.user'])
-		->withCount(['likes' => function ($query) {
-			$query->where('active', true);
-		}])
-		->with(['likes' => function ($query) use ($user) {
-			$query->where('user_id', $user->id);
-		}])
-		->orderBy('created_at', 'desc')
-		->paginate(6);
+		$filterBy = request('filter_by');
+		$filterValue = request('filter_value');
+
+		$quotesQuery = QueryBuilder::for(Quote::class)
+		->with(['movie.user', 'comments.user'])
+		->withCount(['likes' => fn ($query) => $query->where('active', true)])
+		->with(['likes' => fn ($query) => $query->where('user_id', $user->id)])
+		->orderBy('created_at', 'desc');
+
+		if ($filterBy && $filterValue) {
+			$filterValue = urldecode($filterValue);
+			$filterValueLower = strtolower($filterValue);
+
+			if ($filterBy === 'quoteText') {
+				$quotesQuery->whereRaw('LOWER(JSON_UNQUOTE(quote)) LIKE ?', ["%{$filterValueLower}%"]);
+			} elseif ($filterBy === 'movieName') {
+				$quotesQuery->whereHas('movie', function ($query) use ($filterValueLower) {
+					$query->whereRaw('LOWER(JSON_UNQUOTE(name)) LIKE ?', ["%{$filterValueLower}%"]);
+				});
+			}
+		}
+
+		$quotes = $quotesQuery->paginate(10);
 
 		return response()->json([
-			'status' => 'Quotes retrieved successfully!',
-			'data'   => QuoteListingResource::collection($quotes),
+			'status'         => 'Quotes retrieved successfully!',
+			'data'           => QuoteListingResource::collection($quotes),
+			'has_more_pages' => $quotes->hasMorePages(),
 		]);
 	}
 
 	public function show(Quote $quote): JsonResponse
 	{
-		$quote->load(['movie.user', 'comments.user'])->loadCount(['likes' => function ($query) {
-			$query->where('active', true);
-		}]);
+		$user = Auth::user();
+
+		$quote = QueryBuilder::for(Quote::where('id', $quote->id))
+		->with(['movie.user', 'comments.user'])
+		->withCount(['likes' => fn ($query) => $query->where('active', true)])
+		->with(['likes' => fn ($query) => $query->where('user_id', $user->id)])
+		->firstOrFail();
 
 		return response()->json([
 			'status' => 'Quote retrieved successfully!',
