@@ -14,7 +14,7 @@ uses(RefreshDatabase::class);
 test('normal registration', function () {
 	Event::fake();
 
-	$response = postJson('/api/sign-up', [
+	$response = postJson(route('auth.sign-up'), [
 		'name'                  => 'testuser',
 		'email'                 => 'test@example.com',
 		'password'              => 'password',
@@ -42,7 +42,7 @@ test('google login redirect works', function () {
 	Socialite::shouldReceive('with->redirect->getTargetUrl')
 		->andReturn($redirectUrl);
 
-	$response = getJson('/api/auth/google');
+	$response = getJson(route('auth.google'));
 
 	$response->assertStatus(200)
 		->assertJson(['url' => $redirectUrl]);
@@ -60,7 +60,7 @@ test('google callback login works for new user', function () {
 	Socialite::shouldReceive('with->stateless->user')
 		->andReturn($googleUser);
 
-	$response = getJson('/api/auth/google/callback');
+	$response = getJson(route('auth.google.callback'));
 
 	$response->assertStatus(200)
 		->assertJson([
@@ -94,7 +94,7 @@ test('google callback login works for existing user', function () {
 	Socialite::shouldReceive('with->stateless->user')
 		->andReturn($googleUser);
 
-	$response = getJson('/api/auth/google/callback');
+	$response = getJson(route('auth.google.callback'));
 
 	$response->assertStatus(403)
 		->assertJson([
