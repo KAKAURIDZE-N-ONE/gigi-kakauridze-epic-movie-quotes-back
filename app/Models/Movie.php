@@ -44,4 +44,9 @@ class Movie extends Model implements HasMedia
 	{
 		return $this->hasMany(Quote::class);
 	}
+
+	public function scopeFilterByName($query, $value)
+	{
+		return $query->whereRaw('LOWER(JSON_UNQUOTE(name)) LIKE ?', ['%' . strtolower($value) . '%']);
+	}
 }

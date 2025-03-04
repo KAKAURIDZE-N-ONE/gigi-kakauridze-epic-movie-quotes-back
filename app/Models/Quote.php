@@ -38,4 +38,16 @@ class Quote extends Model implements HasMedia
 	{
 		return $this->hasMany(Comment::class);
 	}
+
+	public function scopeFilterByQuoteText($query, $value)
+	{
+		return $query->whereRaw('LOWER(JSON_UNQUOTE(quote)) LIKE ?', ['%' . strtolower($value) . '%']);
+	}
+
+	public function scopeFilterByMovieName($query, $value)
+	{
+		return $query->whereHas('movie', function ($q) use ($value) {
+			$q->whereRaw('LOWER(JSON_UNQUOTE(name)) LIKE ?', ['%' . strtolower($value) . '%']);
+		});
+	}
 }

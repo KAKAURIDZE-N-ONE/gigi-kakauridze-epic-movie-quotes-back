@@ -23,14 +23,8 @@ class QuoteController extends Controller
 		->withCount(['likes' => fn ($query) => $query->where('active', true)])
 		->with(['likes' => fn ($query) => $query->where('user_id', $user->id)])
 		->allowedFilters([
-			AllowedFilter::callback('quote', function ($query, $value) {
-				$query->whereRaw('LOWER(JSON_UNQUOTE(quote)) LIKE ?', ['%' . strtolower($value) . '%']);
-			}),
-			AllowedFilter::callback('movie_name', function ($query, $value) {
-				$query->whereHas('movie', function ($q) use ($value) {
-					$q->whereRaw('LOWER(JSON_UNQUOTE(name)) LIKE ?', ['%' . strtolower($value) . '%']);
-				});
-			}),
+			AllowedFilter::scope('quote', 'filterByQuoteText'),
+			AllowedFilter::scope('movie_name', 'filterByMovieName'),
 		])
 		->orderBy('created_at', 'desc')
 		->paginate(10);

@@ -27,9 +27,7 @@ class MovieController extends Controller
 		->with(['media'])
 		->withCount('quotes')
 		->allowedFilters([
-			AllowedFilter::callback('name', function ($query, $value) {
-				$query->whereRaw('LOWER(JSON_UNQUOTE(name)) LIKE ?', ['%' . strtolower($value) . '%']);
-			}),
+			AllowedFilter::scope('name', 'filterByName'),
 		])
 		->orderBy('created_at', 'desc')
 		->get();
