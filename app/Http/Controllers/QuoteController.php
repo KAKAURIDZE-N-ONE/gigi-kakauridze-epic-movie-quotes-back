@@ -9,6 +9,7 @@ use App\Models\Quote;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 
 class QuoteController extends Controller
@@ -17,27 +18,22 @@ class QuoteController extends Controller
 	{
 		$user = Auth::user();
 
-		$filterBy = request('filter_by');
-		$filterValue = request('filter_value');
-
-		$quotesQuery = QueryBuilder::for(Quote::class)
+		$quotes = QueryBuilder::for(Quote::class)
 		->with(['movie.user', 'comments.user'])
 		->withCount(['likes' => fn ($query) => $query->where('active', true)])
 		->with(['likes' => fn ($query) => $query->where('user_id', $user->id)])
-		->orderBy('created_at', 'desc');
-
-		if ($filterBy && $filterValue) {
-			$filterValue = urldecode($filterValue);
-			$filterValueLower = strtolower($filterValue);
-
-			if ($filterBy === 'quoteText') {
-				$quotesQuery->filterByQuoteText($filterValueLower);
-			} elseif ($filterBy === 'movieName') {
-				$quotesQuery->filterByMovieName($filterValueLower);
-			}
-		}
-
-		$quotes = $quotesQuery->paginate(10);
+		->allowedFilters([
+			AllowedFilter::callback('quote', function ($query, $value) {
+				$query->whereRaw('LOWER(JSON_UNQUOTE(quote)) LIKE ?', ['%' . strtolower($value) . '%']);
+			}),
+			AllowedFilter::callback('movie_name', function ($query, $value) {
+				$query->whereHas('movie', function ($q) use ($value) {
+					$q->whereRaw('LOWER(JSON_UNQUOTE(name)) LIKE ?', ['%' . strtolower($value) . '%']);
+				});
+			}),
+		])
+		->orderBy('created_at', 'desc')
+		->paginate(10);
 
 		return response()->json([
 			'status'         => 'Quotes retrieved successfully!',
