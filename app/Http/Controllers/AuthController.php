@@ -30,6 +30,7 @@ class AuthController extends Controller
 		]);
 
 		Auth::login($user);
+
 		$request->session()->regenerate();
 
 		event(new Registered($user));
