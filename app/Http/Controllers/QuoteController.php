@@ -31,11 +31,9 @@ class QuoteController extends Controller
 			$filterValueLower = strtolower($filterValue);
 
 			if ($filterBy === 'quoteText') {
-				$quotesQuery->whereRaw('LOWER(JSON_UNQUOTE(quote)) LIKE ?', ["%{$filterValueLower}%"]);
+				$quotesQuery->filterByQuoteText($filterValueLower);
 			} elseif ($filterBy === 'movieName') {
-				$quotesQuery->whereHas('movie', function ($query) use ($filterValueLower) {
-					$query->whereRaw('LOWER(JSON_UNQUOTE(name)) LIKE ?', ["%{$filterValueLower}%"]);
-				});
+				$quotesQuery->filterByMovieName($filterValueLower);
 			}
 		}
 

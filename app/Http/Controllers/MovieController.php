@@ -30,7 +30,7 @@ class MovieController extends Controller
 			->orderBy('created_at', 'desc');
 
 		if ($filterValue) {
-			$moviesQuery->whereRaw('LOWER(JSON_UNQUOTE(name)) LIKE ?', ["%{$filterValue}%"]);
+			$moviesQuery->filterByName($filterValue);
 		}
 
 		$movies = $moviesQuery->get();
