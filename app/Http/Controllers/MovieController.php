@@ -11,6 +11,8 @@ use App\Models\Movie;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class MovieController extends Controller
 {
@@ -19,11 +21,16 @@ class MovieController extends Controller
 	public function index(): JsonResponse
 	{
 		$user = Auth::user();
-		$movies = $user->movies()
-			->with(['media'])
-			->withCount('quotes')
-			->orderBy('created_at', 'desc')
-			->get();
+
+		$movies = QueryBuilder::for(Movie::class)
+		->where('user_id', $user->id)
+		->with(['media'])
+		->withCount('quotes')
+		->allowedFilters([
+			AllowedFilter::scope('name', 'filterByName'),
+		])
+		->orderBy('created_at', 'desc')
+		->get();
 
 		return response()->json([
 			'status' => 'Movies retrieved successfully!',

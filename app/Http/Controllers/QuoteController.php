@@ -7,35 +7,44 @@ use App\Http\Requests\UpdateQuoteRequest;
 use App\Http\Resources\QuoteListingResource;
 use App\Models\Quote;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class QuoteController extends Controller
 {
-	public function index(): JsonResponse
+	public function index(Request $request): JsonResponse
 	{
 		$user = Auth::user();
 
-		$quotes = Quote::with(['movie.user', 'comments.user'])
-		->withCount(['likes' => function ($query) {
-			$query->where('active', true);
-		}])
-		->with(['likes' => function ($query) use ($user) {
-			$query->where('user_id', $user->id);
-		}])
+		$quotes = QueryBuilder::for(Quote::class)
+		->with(['movie.user', 'comments.user'])
+		->withCount(['likes' => fn ($query) => $query->where('active', true)])
+		->with(['likes' => fn ($query) => $query->where('user_id', $user->id)])
+		->allowedFilters([
+			AllowedFilter::scope('quote', 'filterByQuoteText'),
+			AllowedFilter::scope('movie_name', 'filterByMovieName'),
+		])
 		->orderBy('created_at', 'desc')
-		->paginate(6);
+		->paginate(10);
 
 		return response()->json([
-			'status' => 'Quotes retrieved successfully!',
-			'data'   => QuoteListingResource::collection($quotes),
+			'status'         => 'Quotes retrieved successfully!',
+			'data'           => QuoteListingResource::collection($quotes),
+			'has_more_pages' => $quotes->hasMorePages(),
 		]);
 	}
 
 	public function show(Quote $quote): JsonResponse
 	{
-		$quote->load(['movie.user', 'comments.user'])->loadCount(['likes' => function ($query) {
-			$query->where('active', true);
-		}]);
+		$user = Auth::user();
+
+		$quote = QueryBuilder::for(Quote::where('id', $quote->id))
+		->with(['movie.user', 'comments.user'])
+		->withCount(['likes' => fn ($query) => $query->where('active', true)])
+		->with(['likes' => fn ($query) => $query->where('user_id', $user->id)])
+		->firstOrFail();
 
 		return response()->json([
 			'status' => 'Quote retrieved successfully!',
