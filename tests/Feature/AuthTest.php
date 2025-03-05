@@ -14,15 +14,20 @@ uses(RefreshDatabase::class);
 test('normal registration', function () {
 	Event::fake();
 
+	config(['app.env' => 'testing']);
+
+	$this->withHeaders([
+		'referer' => env('SANCTUM_STATEFUL_DOMAINS'),
+	]);
+
 	$response = postJson(route('auth.sign-up'), [
-		'name'                  => 'testuser',
+		'name'                  => 'gigi',
 		'email'                 => 'test@example.com',
 		'password'              => 'password',
 		'password_confirmation' => 'password',
 	]);
 
-	$response->assertStatus(200)
-	->assertJson([
+	$response->assertStatus(200)->assertJson([
 		'message' => 'Please check your email for verification link.',
 		'email'   => 'test@example.com',
 	]);
