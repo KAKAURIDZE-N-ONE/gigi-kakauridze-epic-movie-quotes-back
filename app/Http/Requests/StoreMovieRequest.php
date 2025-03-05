@@ -21,8 +21,8 @@ class StoreMovieRequest extends FormRequest
 			'name.en'        => ['required', 'regex:/^[A-Za-z0-9\s\p{P}]+$/u'],
 			'name.ka'        => ['required', 'regex:/^[\p{Georgian}0-9\s\p{P}]+$/u'],
 			'year'           => 'required|integer|digits:4',
-			'image'          => 'required|file|mimes:jpeg,png,jpg,gif,svg|max:10240',
-			'categories'     => 'required|array|min:1',
+            'image' => 'required|image|max:51200',			
+            'categories'     => 'required|array|min:1',
 			'categories.*'   => 'integer|exists:categories,id',
 		];
 	}

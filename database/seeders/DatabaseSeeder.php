@@ -53,11 +53,11 @@ class DatabaseSeeder extends Seeder
 			);
 		}
 
-		$quotes = Quote::factory(3)->create([
+		$quotes = Quote::factory(10)->create([
 			'movie_id' => fn () => $movies->random()->id,
 		]);
 
-		$quotes2 = Quote::factory(3)->create([
+		$quotes2 = Quote::factory(10)->create([
 			'movie_id' => fn () => $movies2->random()->id,
 		]);
 

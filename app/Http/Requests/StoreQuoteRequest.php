@@ -17,7 +17,7 @@ class StoreQuoteRequest extends FormRequest
 			'quote.en' => ['required', 'regex:/^[A-Za-z0-9\s\p{P}]+$/u'],
 			'quote.ka' => ['required', 'regex:/^[\p{Georgian}0-9\s\p{P}]+$/u'],
 			'movie_id' => ['required'],
-			'image'    => 'required|file|mimes:jpeg,png,jpg,gif,svg|max:10240',
+            'image' => 'required|image|max:51200',			
 		];
 	}
 }
