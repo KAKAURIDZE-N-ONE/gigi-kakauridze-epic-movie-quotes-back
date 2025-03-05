@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::controller(AuthController::class)->group(function () {
 	Route::post('/sign-up', 'signUp')->name('auth.sign-up');
-	Route::post('/log-in', 'logIn');
+	Route::post('/log-in', 'logIn')->name('auth.log-in');
 	Route::post('/log-out', 'logOut');
 
 	Route::middleware('guest')->group(function () {
@@ -63,14 +63,14 @@ Route::middleware(['auth:sanctum', 'verified:sanctum'])
 ->prefix('comments')
 ->controller(CommentController::class)
 ->group(function () {
-	Route::post('/', 'store');
+	Route::post('/', 'store')->name('create.comment');
 });
 
 Route::middleware(['auth:sanctum', 'verified:sanctum'])
 ->prefix('likes')
 ->controller(LikeController::class)
 ->group(function () {
-	Route::post('/', 'store');
+	Route::post('/', 'store')->name('like.quote');
 	Route::patch('/{like}', 'update');
 });
 
@@ -85,7 +85,7 @@ Route::middleware(['auth:sanctum', 'verified:sanctum'])
 ->prefix('notifications')
 ->controller(NotificationController::class)
 ->group(function () {
-	Route::get('/', 'notifications');
+	Route::get('/', 'notifications')->name('notifications');
 	Route::post('/mark-all-as-read', 'markAllNotificationsAsRead');
 	Route::post('/mark-as-read/{id}', 'markNotificationAsRead');
 });

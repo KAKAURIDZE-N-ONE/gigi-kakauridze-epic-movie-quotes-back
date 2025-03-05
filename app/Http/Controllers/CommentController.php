@@ -28,6 +28,7 @@ class CommentController extends Controller
 
 		return response()->json([
 			'status'  => 'Comment added successfully!',
-		], 200);
+			'data' => $comment
+		], 201);
 	}
 }
