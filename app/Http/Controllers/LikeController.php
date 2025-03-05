@@ -31,7 +31,7 @@ class LikeController extends Controller
 		return response()->json([
 			'status'  => 'Like added successfully!',
 			'like'    => $like,
-		], 200);
+		], 201);
 	}
 
 	public function update(UpdateLikeRequest $request, Like $like): JsonResponse
