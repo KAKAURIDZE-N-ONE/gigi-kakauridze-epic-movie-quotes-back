@@ -27,6 +27,7 @@ class QuoteController extends Controller
 			AllowedFilter::scope('movie_name', 'filterByMovieName'),
 		])
 		->orderBy('created_at', 'desc')
+		->orderBy('id', 'desc')
 		->paginate(10);
 
 		return response()->json([

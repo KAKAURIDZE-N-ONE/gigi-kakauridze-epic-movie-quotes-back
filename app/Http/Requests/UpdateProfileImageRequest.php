@@ -14,7 +14,7 @@ class UpdateProfileImageRequest extends FormRequest
 	public function rules(): array
 	{
 		return [
-			'avatar' => 'required|image|max:5000',
+			'avatar' => 'required|image|max:51200',
 		];
 	}
 }
