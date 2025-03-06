@@ -41,8 +41,7 @@ class LikeNotification extends Notification implements ShouldQueue
 		return [
 			'quote_id'          => $this->like->quote->id,
 			'movie_id'          => $this->like->quote->movie->id,
-			'liker_name'        => $this->like->user->name,
-			'liker_avatar'      => $this->like->user->getFirstMediaUrl('images'),
+			'sender_id'    => $this->like->user_id,
 		];
 	}
 

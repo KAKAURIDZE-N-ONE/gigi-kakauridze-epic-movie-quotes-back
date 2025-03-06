@@ -40,11 +40,10 @@ class CommentNotification extends Notification implements ShouldQueue
 	public function toArray(object $notifiable): array
 	{
 		return [
-			'comment_id'        => $this->comment->id,
-			'quote_id'          => $this->comment->quote->id,
-			'movie_id'          => $this->comment->quote->movie->id,
-			'commenter_name'    => $this->comment->user->name,
-			'commenter_avatar'  => $this->comment->user->getFirstMediaUrl('images'),
+			'sender_id'    => $this->comment->user_id, 
+			'comment_id'   => $this->comment->id,
+			'quote_id'     => $this->comment->quote->id,
+			'movie_id'     => $this->comment->quote->movie->id,
 		];
 	}
 
