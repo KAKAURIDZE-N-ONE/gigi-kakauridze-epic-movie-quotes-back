@@ -13,7 +13,7 @@ use App\Http\Middleware\SetLocale;
 use Illuminate\Support\Facades\Route;
 
 Route::controller(AuthController::class)->group(function () {
-	Route::middleware([SetLocale::class])->post('/sign-up', 'signUp')->name('auth.sign-up');
+	Route::post('/sign-up', 'signUp')->name('auth.sign-up');
 	Route::post('/log-in', 'logIn')->name('auth.log-in');
 	Route::post('/log-out', 'logOut');
 
@@ -27,7 +27,7 @@ Route::controller(AuthController::class)->group(function () {
 	});
 });
 
-Route::middleware(['auth:sanctum', 'verified:sanctum', SetLocale::class])
+Route::middleware(['auth:sanctum', 'verified:sanctum'])
 	->prefix('user')
 	->controller(UserController::class)
 	->group(function () {
