@@ -76,4 +76,9 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword,
 			Movie::class
 		);
 	}
+
+	public function notifications()
+    {
+        return $this->morphMany(Notification::class, 'notifiable');
+    }
 }
