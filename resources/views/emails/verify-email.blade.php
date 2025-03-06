@@ -17,5 +17,6 @@
         <p style="margin-top: 32px;">If you have any problems, please contact us: support@moviequotes.ge</p>
         <p style="margin-top: 22px;">MovieQuotes Crew</p>
     </div>
+    <div style="width: 100%;height:10px"></div>
 </body>
 </html>
