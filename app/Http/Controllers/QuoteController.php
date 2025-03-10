@@ -28,7 +28,7 @@ class QuoteController extends Controller
 		])
 		->orderBy('created_at', 'desc')
 		->orderBy('id', 'desc')
-		->paginate(10);
+		->paginate(2);
 
 		return response()->json([
 			'status'         => 'Quotes retrieved successfully!',
