@@ -7,6 +7,7 @@ use App\Models\Movie;
 use App\Models\Quote;
 use App\Notifications\CommentNotification;
 use App\Notifications\LikeNotification;
+use Illuminate\Support\Facades\Event;
 use Laravel\Sanctum\Sanctum;
 
 
@@ -14,6 +15,7 @@ uses(RefreshDatabase::class);
 
 test('user receives notification when their quote is liked or commented', function () {    
     Notification::fake();
+    Event::fake();
 
     $user1 = User::factory()->create();
     $movie = Movie::factory()->create(['user_id' => $user1->id]);
