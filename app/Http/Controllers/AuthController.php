@@ -78,6 +78,22 @@ class AuthController extends Controller
 	{
 		$validated = $request->validated();
 		$email = $validated['email'];
+	
+		$user = User::where('email', $email)->first();
+
+		if (!$user) {
+			return response()->json([
+				'status'  => 'error',
+				'message' => 'No account found with this email.',
+			], 404);
+		}
+		
+	    if (!$user->password) {
+			return response()->json([
+				'status'  => 'error',
+				'message' => 'Password reset is not allowed for Google accounts.',
+			], 403);
+		}
 
 		Password::sendResetLink(['email' => $email]);
 
@@ -134,9 +150,11 @@ class AuthController extends Controller
 			->addMediaFromUrl($url)
 			->toMediaCollection('images', 'public');
 		} elseif (!$user) {
+			$sanitizedName = $this->sanitizeGoogleUserName($googleUser->getName());
+
 			$user = User::create([
 				'email'               => $googleUser->getEmail(),
-				'name'                => $googleUser->getName(),
+				'name'                => $sanitizedName,
 				'google_id'           => $googleUser->getId(),
 				'email_verified_at'   => now(),
 			]);
@@ -151,4 +169,25 @@ class AuthController extends Controller
 
 		return response()->json(['status'=> 'Login successfully.']);
 	}
+
+	private function sanitizeGoogleUserName($name)
+	{
+		$name = strtolower($name);
+	
+		$sanitizedName = preg_replace('/[^a-z0-9]/', '', $name);
+	
+		return $this->makeUniqueName($sanitizedName);
+	}
+
+    private function makeUniqueName($baseName)
+    {
+        $name = $baseName;
+        $counter = 1;
+
+        while (User::where('name', $name)->exists()) {
+            $name = $baseName . $counter;
+            $counter++;
+        }
+        return $name;
+}
 }
