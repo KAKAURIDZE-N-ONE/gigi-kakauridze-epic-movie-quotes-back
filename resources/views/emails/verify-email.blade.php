@@ -7,7 +7,7 @@
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color: #181623; padding: 0;">
         <tr>
             <td>
-                <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="background-color: #181623; color: white; border-radius: 10px; overflow: hidden;">
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color: #181623; color: white; border-radius: 10px; overflow: hidden;">
                     <tr>
                         <td align="center" style="padding: 20px;">
                             <img src="{{ env('APP_URL') . '/storage/assets/Logo.png' }}" alt="Logo" style="display: block; margin: 0 auto; margin-top: 30px; padding: 0;">
