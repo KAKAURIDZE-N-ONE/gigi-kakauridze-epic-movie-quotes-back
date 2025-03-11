@@ -50,4 +50,14 @@ class Quote extends Model implements HasMedia
 			$q->whereRaw('LOWER(JSON_UNQUOTE(name)) LIKE ?', ['%' . strtolower($value) . '%']);
 		});
 	}
+
+	public function scopeFilterByGlobal($query, $value)
+    {
+        return $query->where(function ($q) use ($value) {
+            $q->whereRaw('LOWER(JSON_UNQUOTE(quote)) LIKE ?', ['%' . strtolower($value) . '%'])
+              ->orWhereHas('movie', function ($subQuery) use ($value) {
+                  $subQuery->whereRaw('LOWER(JSON_UNQUOTE(name)) LIKE ?', ['%' . strtolower($value) . '%']);
+              });
+        });
+    }
 }
