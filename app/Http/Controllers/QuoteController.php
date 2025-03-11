@@ -25,10 +25,11 @@ class QuoteController extends Controller
 		->allowedFilters([
 			AllowedFilter::scope('quote', 'filterByQuoteText'),
 			AllowedFilter::scope('movie_name', 'filterByMovieName'),
+			AllowedFilter::scope('global', 'filterByGlobal'), 
 		])
 		->orderBy('created_at', 'desc')
 		->orderBy('id', 'desc')
-		->paginate(2);
+		->paginate(10);
 
 		return response()->json([
 			'status'         => 'Quotes retrieved successfully!',
